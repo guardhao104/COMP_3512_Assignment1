@@ -1,5 +1,6 @@
 #pragma once
 #include <iostream>
+#include <iomanip>
 
 class Matrix
 {
@@ -34,6 +35,18 @@ public:
 			}
 		}
 	}
+	Matrix(int row, double num) : row_number(row), col_number(1)
+	{
+		matrix = new double*[row_number];
+		for (int i = 0; i < row_number; ++i)
+		{
+			matrix[i] = new double[col_number];
+			for (int j = 0; j < col_number; ++j)
+			{
+				matrix[i][j] = num;
+			}
+		}
+	}
 	Matrix(const Matrix& mat) : row_number(mat.row_number), col_number(mat.col_number)
 	{
 		matrix = new double*[row_number];
@@ -54,6 +67,9 @@ public:
 		}
 		delete[] matrix;
 	}
+	int get_row() const { return row_number; };
+	int get_col() const { return col_number; };
+
 	Matrix& operator=(Matrix mat)
 	{
 		using std::swap;
@@ -101,6 +117,17 @@ public:
 		}
 		return result;
 	}
+	friend Matrix operator/(Matrix mat, double factor)
+	{
+		for (int i = 0; i < mat.row_number; ++i)
+		{
+			for (int j = 0; j < mat.col_number; ++j)
+			{
+				mat.matrix[i][j] /= factor;
+			}
+		}
+		return mat;
+	}
 	friend Matrix operator+(Matrix m1, const Matrix& m2)
 	{
 		for (int i = 0; i < m1.row_number; ++i)
@@ -111,5 +138,65 @@ public:
 			}
 		}
 		return m1;
+	}
+	friend std::ostream& operator<<(std::ostream& out, const Matrix& mat)
+	{
+		for (int i = 0; i < mat.row_number; ++i)
+		{
+			for (int j = 0; j < mat.col_number; ++j)
+				out << std::setw(4) << mat.matrix[i][j] << "  ";
+			out << std::endl;
+		}
+		return out;
+	}
+
+	double sum_of_col(int col) const
+	{
+		double sum = 0.0;
+		for (int i = 0; i < row_number; ++i)
+		{
+			sum += matrix[i][col];
+		}
+		return sum;
+	}
+	Matrix make_left_stochastic_matrix() const
+	{
+		Matrix left_stochastic = *this;
+		for (int i = 0; i < row_number; ++i)
+		{
+			for (int j = 0; j < col_number; ++j)
+			{
+				if (sum_of_col(j) != 0)
+					left_stochastic.matrix[i][j] /= sum_of_col(j);
+				else
+					left_stochastic.matrix[i][j] = 1.0 / row_number;
+			}
+		}
+		return left_stochastic;
+	}
+	Matrix make_transition_matrix() const
+	{
+		Matrix transition = *this;
+		for (int i = 0; i < row_number; ++i)
+		{
+			for (int j = 0; j < col_number; ++j)
+			{
+				transition.matrix[i][j] = 1.0 / row_number;
+			}
+		}
+		return transition;
+	}
+	bool converges(const Matrix& org) const
+	{
+		for (int i = 0; i < row_number; ++i)
+		{
+			for (int j = 0; j < col_number; ++j)
+			{
+				double judge = matrix[i][j] - org.matrix[i][j];
+				if (judge > 0.001 || judge < -0.001)
+					return false;
+			}
+		}
+		return true;
 	}
 };
