@@ -69,6 +69,7 @@ public:
 	}
 	int get_row() const { return row_number; };
 	int get_col() const { return col_number; };
+	double get_value(int row, int col) const { return matrix[row][col]; };
 
 	Matrix& operator=(Matrix mat)
 	{
