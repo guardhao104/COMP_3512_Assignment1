@@ -12,7 +12,14 @@ public:
 	PageRank(int page, Matrix orignal) : page_number(page), connectivity(orignal) {};
 	PageRank(const PageRank& src) : page_number(src.page_number), connectivity(src.connectivity) {};
 	~PageRank() {};
-	Matrix get_rank_result(double factor)
+
+	//This function will caculate the result of ranking.
+	//PARAM		factor is describing how much the other condation will influence the final result
+	//PRE		factor > 0
+	//PRE		factor < 1
+	//POST		NULL
+	//RETURN	the result ranking matrix which has page_number row and only 1 column
+	Matrix get_rank_result(double factor) const
 	{
 		Matrix s = connectivity.make_left_stochastic_matrix();
 		Matrix q = connectivity.make_transition_matrix();

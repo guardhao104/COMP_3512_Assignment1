@@ -40,6 +40,14 @@ int main()
 	cout << "The ranking result: " << endl;
 	for (int i = 0; i < size; ++i)
 		cout << (char)('A' + i) << " = " << fixed << setprecision(3) << rank.get_value(i, 0) << endl;
+	cout << "\nA file named PageRank.txt has been generated with this result!\n" << endl;
+	ofstream out("PageRank.txt");
+	if (out.is_open())
+	{
+		for (int i = 0; i < size; ++i)
+			out << (char)('A' + i) << " = " << fixed << setprecision(3) << rank.get_value(i, 0) << endl;
+		out.close();
+	}
 	system("pause");
 	return 0;
 }

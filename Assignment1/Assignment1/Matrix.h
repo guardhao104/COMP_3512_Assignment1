@@ -145,12 +145,18 @@ public:
 		for (int i = 0; i < mat.row_number; ++i)
 		{
 			for (int j = 0; j < mat.col_number; ++j)
-				out << std::setw(4) << mat.matrix[i][j] << "  ";
+				out << std::setw(2) << mat.matrix[i][j] << "  ";
 			out << std::endl;
 		}
 		return out;
 	}
 
+	//This can give the total sum of specified column.
+	//PARAM		col is the specified column
+	//PRE		col >= 0
+	//PRE		col < col_number
+	//POST		NULL
+	//RETURN	the sum of specified column
 	double sum_of_col(int col) const
 	{
 		double sum = 0.0;
@@ -160,6 +166,11 @@ public:
 		}
 		return sum;
 	}
+
+	//This function can generate a left stochastic matrix from this matrix.
+	//PRE		NULL
+	//POST		NULL
+	//RETURN	left stochastic matrix
 	Matrix make_left_stochastic_matrix() const
 	{
 		Matrix left_stochastic = *this;
@@ -175,6 +186,11 @@ public:
 		}
 		return left_stochastic;
 	}
+
+	//This function can generate a transition matrix from this matrix.
+	//PRE		NULL
+	//POST		NULL
+	//RETURN	transition matrix
 	Matrix make_transition_matrix() const
 	{
 		Matrix transition = *this;
@@ -187,6 +203,12 @@ public:
 		}
 		return transition;
 	}
+
+	//This function is checking if two matrix have nearly value.
+	//PARAM		another matrix that will be checked both
+	//PRE		two matrixes should have same size
+	//POST		NULL
+	//RETURN	if two matrixes have nearly value in each position
 	bool converges(const Matrix& org) const
 	{
 		for (int i = 0; i < row_number; ++i)
