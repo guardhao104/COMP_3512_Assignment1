@@ -67,10 +67,14 @@ public:
 		}
 		delete[] matrix;
 	}
+	void set_row(int row) { row_number = row; };
 	int get_row() const { return row_number; };
+	void set_col(int col) { col_number = col; };
 	int get_col() const { return col_number; };
+	void set_value(int row, int col, double val) { matrix[row][col] = val; };
 	double get_value(int row, int col) const { return matrix[row][col]; };
 
+	//Overload operator = for assignment.
 	Matrix& operator=(Matrix mat)
 	{
 		using std::swap;
@@ -79,6 +83,8 @@ public:
 		swap(matrix, mat.matrix);
 		return *this;
 	}
+
+	//Overload operator * between matrix and number.
 	friend Matrix operator*(Matrix mat, double factor)
 	{
 		for (int i = 0; i < mat.row_number; ++i)
@@ -90,6 +96,8 @@ public:
 		}
 		return mat;
 	}
+
+	//Overload operator * between matrix and number.
 	friend Matrix operator*(double factor, Matrix mat)
 	{
 		for (int i = 0; i < mat.row_number; ++i)
@@ -101,6 +109,9 @@ public:
 		}
 		return mat;
 	}
+
+	//Overload the operator * between two matrix that the first one has
+	//the same colunm number as the row number of second matrix.
 	friend Matrix operator*(const Matrix& m1, const Matrix& m2)
 	{
 		Matrix result = Matrix(m1.row_number, m2.col_number);
@@ -118,6 +129,8 @@ public:
 		}
 		return result;
 	}
+
+	//Overload the operator / between a matrix and a number.
 	friend Matrix operator/(Matrix mat, double factor)
 	{
 		for (int i = 0; i < mat.row_number; ++i)
@@ -129,6 +142,8 @@ public:
 		}
 		return mat;
 	}
+
+	//Overload the operator + between two matrix in same size.
 	friend Matrix operator+(Matrix m1, const Matrix& m2)
 	{
 		for (int i = 0; i < m1.row_number; ++i)
@@ -140,6 +155,8 @@ public:
 		}
 		return m1;
 	}
+
+	//Overload the operator << to print a matrix.
 	friend std::ostream& operator<<(std::ostream& out, const Matrix& mat)
 	{
 		for (int i = 0; i < mat.row_number; ++i)
@@ -149,77 +166,5 @@ public:
 			out << std::endl;
 		}
 		return out;
-	}
-
-	//This can give the total sum of specified column.
-	//PARAM		col is the specified column
-	//PRE		col >= 0
-	//PRE		col < col_number
-	//POST		NULL
-	//RETURN	the sum of specified column
-	double sum_of_col(int col) const
-	{
-		double sum = 0.0;
-		for (int i = 0; i < row_number; ++i)
-		{
-			sum += matrix[i][col];
-		}
-		return sum;
-	}
-
-	//This function can generate a left stochastic matrix from this matrix.
-	//PRE		NULL
-	//POST		NULL
-	//RETURN	left stochastic matrix
-	Matrix make_left_stochastic_matrix() const
-	{
-		Matrix left_stochastic = *this;
-		for (int i = 0; i < row_number; ++i)
-		{
-			for (int j = 0; j < col_number; ++j)
-			{
-				if (sum_of_col(j) != 0)
-					left_stochastic.matrix[i][j] /= sum_of_col(j);
-				else
-					left_stochastic.matrix[i][j] = 1.0 / row_number;
-			}
-		}
-		return left_stochastic;
-	}
-
-	//This function can generate a transition matrix from this matrix.
-	//PRE		NULL
-	//POST		NULL
-	//RETURN	transition matrix
-	Matrix make_transition_matrix() const
-	{
-		Matrix transition = *this;
-		for (int i = 0; i < row_number; ++i)
-		{
-			for (int j = 0; j < col_number; ++j)
-			{
-				transition.matrix[i][j] = 1.0 / row_number;
-			}
-		}
-		return transition;
-	}
-
-	//This function is checking if two matrix have nearly value.
-	//PARAM		another matrix that will be checked both
-	//PRE		two matrixes should have same size
-	//POST		NULL
-	//RETURN	if two matrixes have nearly value in each position
-	bool converges(const Matrix& org) const
-	{
-		for (int i = 0; i < row_number; ++i)
-		{
-			for (int j = 0; j < col_number; ++j)
-			{
-				double judge = matrix[i][j] - org.matrix[i][j];
-				if (judge > 0.001 || judge < -0.001)
-					return false;
-			}
-		}
-		return true;
 	}
 };
